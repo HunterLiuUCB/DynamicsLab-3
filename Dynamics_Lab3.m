@@ -15,19 +15,22 @@ J = J_hub +J_extra + J_load;
 K1 = 10;
 K3 = 0;
 
-% K1_set = [10 20 5 10 10 10]; %Kptheta
-% K3_set = [0 0 0 1 -1 -0.5]; %KDtheta
+K1_set = [10 20 5 10 10 10]; %Kptheta
+K3_set = [0 0 0 1 -1 -0.5]; %KDtheta
 
-% figure();
-% for i = 1: length(K1_set)
+figure();
+for i = 1: length(K1_set)
 
 % Closed Loop System
 num = (K1*Kg*Km) / (J * Rm);
 den = [1 (((Kg^2 * Km^2) / (J*Rm)) + ((K3*Kg*Km)/(J*Rm))) ((K1*Kg*Km) / (J * Rm))];
 sysTF = tf(num,den);
+
 % Step Response
 %[x,t] = step(sysTF);
+
+%Lsim
 time = 0:0.05:2.5;
 u = ones(1,length(time)) .* 0.5;
 lsim(sysTF,u,time)
-%end
+end
