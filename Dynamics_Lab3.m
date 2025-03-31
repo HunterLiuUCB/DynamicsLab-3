@@ -1,1 +1,29 @@
 %% Dynamics Lab 3
+
+%% Constants
+Kg = 33.3;
+Km = 0.0401;
+Rm = 19.2;
+J_hub = 0.0005;
+J_extra = 0.2 * 0.2794^2;
+J_load = 0.0015;
+J = J_hub +J_extra + J_load;
+
+K1 = 10;
+K3 = 0;
+
+% K1_set = [10 20 5 10 10 10]; %Kptheta
+% K3_set = [0 0 0 1 -1 0.5]; %KDtheta
+
+% figure();
+% for i = 1: length(K1_set)
+
+% Closed Loop System
+num = (K1*Kg*Km) / (J * Rm);
+den = [1 (((Kg^2 * Km^2) / (J*Rm)) + ((K3*Kg*Km)/(J*Rm))) ((K1*Kg*Km) / (J * Rm))];
+sysTF = tf(num,den);
+% Step Response
+[x,t] = step(sysTF,0.5);
+plot(t,x)
+
+%end
