@@ -35,10 +35,14 @@ title('Gain Testing')
 legend('K1 = 10, K3 = 0','K1 = 20, K3 = 0','K1 = 5, K3 = 0','K1 = 10, K3 = 1','K1 = 10, K3 = -1','K1 = 10, K3 = -0.5',Location='best')
 
 %% Personalized gains
-figure();
-hold on;
 K1 = 30;
 K3 = 1.5;
+ExpData = readmatrix('Group-1_10-Experimentaldata_30_1.txt');
+for i = 1:length(ExpData)
+ if ExpData(i,2) 
+end
+% 1 - Time (ms)
+% 2 - Position (rad)
 
 num = (K1*Kg*Km) / (J * Rm);
 den = [1 (((Kg^2 * Km^2) / (J*Rm)) + ((K3*Kg*Km)/(J*Rm))) ((K1*Kg*Km) / (J * Rm))];
@@ -48,7 +52,15 @@ sysTF = tf(num,den);
 %[x,t] = step(sysTF);
 
 %Lsim
-time = 0:0.05:2;
-u = ones(1,length(time)) .* 0.5;
-lsim(sysTF,u,time)
+time = 0.001:0.001:10;
+u = ones(1,length(time)) .* 1;
+
+figure();
+hold on;
+plot(time,(ExpData(:,2)*-1),'r');
+lsim(sysTF - 0.5,u,time)
 title('Designed System')
+hold off
+
+figure();
+plot(ExpData(:,1),ExpData(:,2))
