@@ -38,9 +38,7 @@ legend('K1 = 10, K3 = 0','K1 = 20, K3 = 0','K1 = 5, K3 = 0','K1 = 10, K3 = 1','K
 K1 = 30;
 K3 = 1.5;
 ExpData = readmatrix('Group-1_10-Experimentaldata_30_1.txt');
-for i = 1:length(ExpData)
- if ExpData(i,2) 
-end
+
 % 1 - Time (ms)
 % 2 - Position (rad)
 
@@ -52,15 +50,24 @@ sysTF = tf(num,den);
 %[x,t] = step(sysTF);
 
 %Lsim
-time = 0.001:0.001:10;
+time = 0.001:0.001:3;
 u = ones(1,length(time)) .* 1;
+ExpData_crop = ExpData(1:length(time), :);
 
 figure();
 hold on;
-plot(time,(ExpData(:,2)*-1),'r');
+title('Model vs Hardware (Version 1)')
+xlabel('Time (s)')
+ylabel('Amplitude (rads)')
+plot(time,(ExpData_crop(:,2)*-1),'r');
 lsim(sysTF - 0.5,u,time)
 title('Designed System')
 hold off
 
 figure();
+hold on
+title('Hardware Time Response (Version 1)')
+xlabel('Time (ms)')
+ylabel('Amplitude (rads)')
 plot(ExpData(:,1),ExpData(:,2))
+hold off
