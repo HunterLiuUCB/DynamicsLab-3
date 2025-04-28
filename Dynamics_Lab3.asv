@@ -83,9 +83,11 @@ ExpData2 = readmatrix('3-20_exp2.txt');
 num = (K1*Kg*Km) / (J * Rm);
 den = [1 (((Kg^2 * Km^2) / (J*Rm)) + ((K3*Kg*Km)/(J*Rm))) ((K1*Kg*Km) / (J * Rm))];
 sysTF = tf(num,den);
-time = 0.001:0.001:5;
+time = 0.001:0.001:2.5;
 u = ones(1,length(time)) .* 1;
-ExpData_crop2 = ExpData2(1:length(time), :);
+t_beg = find(ExpData2(:,1) == 4975020);
+ExpData_crop2 = ExpData2(2587:2586+length(time), :);
+
 
 figure();
 hold on;
@@ -96,19 +98,22 @@ title('Model (Version 2)')
 hold off
 
 %% Version 2: Model vs Hardware
-Overshoot = max(ExpData_crop2(:,2));
+Overshoot_HW = max(ExpData_crop2(:,2));
+Overshoot_Model = 0.536;
 
 figure();
 hold on;
 xlabel('Time (s)')
 ylabel('Amplitude (rads)')
-plot(time - 5,(ExpData_crop2(:,2)),'r');
-lsim(sysTF - 0.5,u,time-2.5)
-legend('Hardware Data','Model Data')
+plot(time,(ExpData_crop2(:,2)),'r');
+lsim(sysTF - 0.5,u,time)
+yline(Overshoot_HW,'r--','LineWidth',1.5)
+yline(Overshoot_Model,'b--','LineWidth',1.5)
+xline(0.495,'r:','LineWidth',1.5)
+xline(0.744,'b:','LineWidth',1.5)
+legend('Hardware Data','Model Data','Hardware Overshoot','Model Overshoot','Hardware Settling Time', 'Model Settling Time')
 title('Model vs Hardware (Version 2)')
 hold off
-Overshoot = max(ExpData_crop2(:,2));
-
 %% Version 2: Hardware
 figure();
 hold on;
@@ -117,6 +122,14 @@ xlabel('Time (ms)')
 ylabel('Amplitude (rads)')
 title('Hardware (Version 2)')
 hold off
+
+%% Natural Dampening Model
+figure();
+hold on;
+xlabel('Time (s)')
+ylabel('Amplitude (rads)')
+plot(time,(ExpData_crop2(:,2)),'r');
+lsim(sysTF - 0.5,u,time)
 
 
 

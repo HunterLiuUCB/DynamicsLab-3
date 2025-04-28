@@ -85,7 +85,9 @@ den = [1 (((Kg^2 * Km^2) / (J*Rm)) + ((K3*Kg*Km)/(J*Rm))) ((K1*Kg*Km) / (J * Rm)
 sysTF = tf(num,den);
 time = 0.001:0.001:2.5;
 u = ones(1,length(time)) .* 1;
-ExpData_crop2 = ExpData2(1:length(time), :);
+t_beg = find(ExpData2(:,1) == 4975020);
+ExpData_crop2 = ExpData2(2587:2586+length(time), :);
+
 
 figure();
 hold on;
@@ -101,13 +103,15 @@ Overshoot_Model = 0.536;
 
 figure();
 hold on;
+plot(time,(ExpData_crop2(:,2)),'r');
+lsim(sysTF - 0.5,u,time)
+yline(Overshoot_HW,'r--','LineWidth',1.5)
+yline(Overshoot_Model,'b--','LineWidth',1.5)
+xline(0.495,'r:','LineWidth',1.5)
+xline(0.744,'b:','LineWidth',1.5)
 xlabel('Time (s)')
 ylabel('Amplitude (rads)')
-plot(time-2,(ExpData_crop2(:,2)),'r');
-lsim(sysTF - 0.5,u,time)
-yline(Overshoot_HW,'r--')
-yline(Overshoot_Model,'b--')
-legend('Hardware Data','Model Data')
+legend('Hardware Data','Model Data','Hardware Overshoot (from 0.45 rads)','Model Overshoot (from 0.5 rads)','Hardware Settling Time', 'Model Settling Time')
 title('Model vs Hardware (Version 2)')
 hold off
 %% Version 2: Hardware
@@ -118,6 +122,29 @@ xlabel('Time (ms)')
 ylabel('Amplitude (rads)')
 title('Hardware (Version 2)')
 hold off
+
+%% Natural Dampening Model
+figure();
+hold on;
+xlabel('Time (s)')
+ylabel('Amplitude (rads)')
+plot(time,(ExpData_crop2(:,2)),'g');
+lsim(sysTF - 0.5,u,time)
+
+B = 0.06;
+num = (K1*Kg*Km) / (J * Rm);
+den = [1 (((Kg^2 * Km^2) / (J*Rm)) + ((K3*Kg*Km)/(J*Rm))) ((K1*Kg*Km) / (J * Rm)) + B/J];
+sysTF = tf(num,den);
+time = 0.001:0.001:2.5;
+u = ones(1,length(time)) .* 1;
+lsim(sysTF - 0.5,u,time);
+xlabel('Time (ms)')
+ylabel('Amplitude (rads)')
+title('Natural Damping Comparison')
+legend('Hardware','Model','Natural Damping')
+hold off
+
+
 
 
 
