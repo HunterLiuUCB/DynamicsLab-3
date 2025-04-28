@@ -31,6 +31,7 @@ time = 0:0.05:2.5;
 u = ones(1,length(time)) .* 0.5;
 lsim(sysTF(i),u,time)
 end
+ylabel('Amplitude (rads)')
 title('Gain Testing')
 legend('K1 = 10, K3 = 0','K1 = 20, K3 = 0','K1 = 5, K3 = 0','K1 = 10, K3 = 1','K1 = 10, K3 = -1','K1 = 10, K3 = -0.5',Location='best')
 
@@ -52,17 +53,16 @@ sysTF = tf(num,den);
 %Lsim
 time = 0.001:0.001:2;
 u = ones(1,length(time)) .* 1;
-ExpData_crop = ExpData(1:length(time), :);
-
+t_beg1 = find(ExpData(:,1) == 255032);
+ExpData_crop = ExpData(5672:5671+length(time), :);
 %% Version 1: Model vs Hardware
 figure();
 hold on;
-title('Model vs Hardware (Version 1)')
-xlabel('Time (s)')
-ylabel('Amplitude (rads)')
-plot(time - 0.8,(ExpData_crop(:,2)*-1),'r');
+plot(time,(ExpData_crop(:,2)),'r');
 lsim(sysTF - 0.5,u,time)
 legend('Hardware Data','Model Data')
+xlabel('Time (s)')
+ylabel('Amplitude (rads)')
 title('Model vs Hardware (Version 1)')
 hold off
 
